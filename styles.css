@@ -343,4 +343,7 @@ main, .nav, .footer { position: relative; z-index: 2; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
+  /* Animation is off, so reveal the first rotating word instead of leaving the headline dangling */
+  .word-rotate span { opacity: 0; }
+  .word-rotate span:first-child { opacity: 1; }
 }
