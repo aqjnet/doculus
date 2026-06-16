@@ -155,30 +155,60 @@ main, .nav, .footer { position: relative; z-index: 2; }
   margin-bottom: 18px;
 }
 
-.hero-title {
-  font-size: clamp(2.6rem, 7vw, 5.2rem);
-  font-weight: 700;
-  margin-bottom: 24px;
+/* Hero animated logo */
+.hero-logo-wrap { display: flex; justify-content: center; margin-bottom: 26px; }
+.hero-logo {
+  width: clamp(112px, 22vw, 170px);
+  height: auto;
+  filter: drop-shadow(0 16px 44px rgba(76, 201, 240, 0.30));
+  animation: heroFloat 6s ease-in-out infinite;
 }
-.word-rotate {
-  display: inline-grid;
-  vertical-align: top;
+.hero-logo .orbit {
+  transform-box: fill-box; transform-origin: center;
+  animation: heroSpin 9s linear infinite;
+}
+.hero-logo .node {
+  transform-box: fill-box; transform-origin: center;
+  animation: heroPulse 2.6s ease-in-out infinite;
+}
+.hero-logo .scan { opacity: 0; animation: heroScan 3.4s ease-in-out infinite; }
+.hero-logo .line {
+  transform-box: fill-box; transform-origin: left center;
+  animation: heroLine 3.4s ease-in-out infinite;
+}
+.hero-logo .line-2 { animation-delay: 0.18s; }
+.hero-logo .line-3 { animation-delay: 0.36s; }
+
+@keyframes heroFloat { 50% { transform: translateY(-10px); } }
+@keyframes heroSpin { to { transform: rotate(360deg); } }
+@keyframes heroPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.28); opacity: 0.72; } }
+@keyframes heroScan {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  48% { transform: translateY(22px); opacity: 1; }
+  62% { opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+@keyframes heroLine {
+  0%, 100% { transform: scaleX(0.92); opacity: 0.6; }
+  50% { transform: scaleX(1); opacity: 1; }
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 9vw, 5.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+.hero-tagline {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.15rem, 3vw, 1.75rem);
+  font-weight: 600;
+  margin-bottom: 22px;
+  color: var(--accent); /* visible fallback if background-clip:text is unsupported */
   background: linear-gradient(120deg, var(--accent), var(--accent-2), var(--accent-3));
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-.word-rotate span {
-  grid-area: 1 / 1;
-  opacity: 0;
-  animation: wordcycle 9s infinite;
-}
-.word-rotate span:nth-child(1) { animation-delay: 0s; }
-.word-rotate span:nth-child(2) { animation-delay: 2.25s; }
-.word-rotate span:nth-child(3) { animation-delay: 4.5s; }
-.word-rotate span:nth-child(4) { animation-delay: 6.75s; }
-@keyframes wordcycle {
-  0%, 22% { opacity: 1; transform: translateY(0); }
-  27%, 100% { opacity: 0; transform: translateY(-14px); }
 }
 
 .hero-sub {
@@ -343,7 +373,6 @@ main, .nav, .footer { position: relative; z-index: 2; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
-  /* Animation is off, so reveal the first rotating word instead of leaving the headline dangling */
-  .word-rotate span { opacity: 0; }
-  .word-rotate span:first-child { opacity: 1; }
+  /* Logo stays fully visible; only the decorative scan beam is animation-driven, so keep it hidden */
+  .hero-logo .scan { opacity: 0; }
 }

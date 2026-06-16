@@ -45,16 +45,54 @@
     <section class="hero">
       <div class="hero-inner">
         <p class="eyebrow reveal">Document Control · Construction &amp; Engineering</p>
-        <h1 class="hero-title reveal">
-          Order out of
-          <span class="word-rotate" aria-hidden="true">
-            <span>chaos.</span>
-            <span>revisions.</span>
-            <span>drawings.</span>
-            <span>transmittals.</span>
-          </span>
-          <span class="sr-only">chaos.</span>
-        </h1>
+        <div class="hero-logo-wrap reveal">
+          <svg class="hero-logo" viewBox="0 0 48 48" role="img" aria-label="Doculus" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="hgrad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4CC9F0"/>
+                <stop offset="0.55" stop-color="#7B61FF"/>
+                <stop offset="1" stop-color="#34E0A1"/>
+              </linearGradient>
+              <linearGradient id="hgrad2" x1="12" y1="8" x2="36" y2="40" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4CC9F0"/>
+                <stop offset="1" stop-color="#34E0A1"/>
+              </linearGradient>
+              <linearGradient id="hscan" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#4CC9F0" stop-opacity="0"/>
+                <stop offset="0.5" stop-color="#4CC9F0" stop-opacity="0.9"/>
+                <stop offset="1" stop-color="#4CC9F0" stop-opacity="0"/>
+              </linearGradient>
+              <clipPath id="hsheet">
+                <path d="M12 9.5A3.5 3.5 0 0 1 15.5 6H27l9 9v18.5A3.5 3.5 0 0 1 32.5 37h-17A3.5 3.5 0 0 1 12 33.5v-24Z"/>
+              </clipPath>
+            </defs>
+
+            <!-- back sheets -->
+            <rect x="13" y="9" width="22" height="28" rx="4" transform="rotate(8 24 23)" fill="url(#hgrad)" opacity="0.22"/>
+            <rect x="12" y="8" width="22" height="28" rx="4" transform="rotate(4 23 22)" fill="url(#hgrad)" opacity="0.40"/>
+
+            <!-- front sheet -->
+            <path d="M12 9.5A3.5 3.5 0 0 1 15.5 6H27l9 9v18.5A3.5 3.5 0 0 1 32.5 37h-17A3.5 3.5 0 0 1 12 33.5v-24Z" fill="#0d1322" stroke="url(#hgrad2)" stroke-width="2"/>
+            <path d="M27 6v6a3 3 0 0 0 3 3h6" stroke="url(#hgrad2)" stroke-width="2" stroke-linejoin="round" fill="none"/>
+
+            <!-- scanning beam (clipped to the sheet) -->
+            <g clip-path="url(#hsheet)">
+              <rect class="scan" x="12" y="8" width="24" height="6" fill="url(#hscan)"/>
+            </g>
+
+            <!-- document lines -->
+            <rect class="line line-1" x="16.5" y="19" width="10" height="2.2" rx="1.1" fill="#4CC9F0"/>
+            <rect class="line line-2" x="16.5" y="23.6" width="15" height="2.2" rx="1.1" fill="#6f8bd6" opacity="0.6"/>
+            <rect class="line line-3" x="16.5" y="28.2" width="12" height="2.2" rx="1.1" fill="#6f8bd6" opacity="0.6"/>
+
+            <!-- control orbit node -->
+            <circle cx="35" cy="33" r="8.5" fill="#0a0e1a"/>
+            <circle class="orbit" cx="35" cy="33" r="6.6" fill="none" stroke="url(#hgrad)" stroke-width="1.6" stroke-dasharray="2.2 3"/>
+            <circle class="node" cx="35" cy="33" r="3" fill="url(#hgrad2)"/>
+          </svg>
+        </div>
+        <h1 class="hero-title reveal">Doculus</h1>
+        <p class="hero-tagline reveal">Order out of chaos.</p>
         <p class="hero-sub reveal">
           Specialist document control that keeps your project's drawings, transmittals and
           records accurate, traceable and audit-ready — from kick-off to handover.
