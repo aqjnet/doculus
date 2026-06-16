@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Doculus — specialist document control for construction & engineering projects. Drawing registers, transmittals, revision control, ISO 19650 and EDMS setup that keeps your project audit-ready." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <title>Doculus — Document Control for Construction &amp; Engineering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background canvas -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Nav -->
+  <header class="nav" id="nav">
+    <a href="#top" class="brand" aria-label="Doculus home">
+      <img src="logo.svg" alt="" class="brand-logo" width="30" height="30" />
+      <span class="brand-name">Doculus</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#why">Why Doculus</a>
+      <a href="#process">Process</a>
+      <a href="#contact" class="nav-cta">Contact</a>
+    </nav>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <a href="#services">Services</a>
+    <a href="#why">Why Doculus</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow reveal">Document Control · Construction &amp; Engineering</p>
+        <h1 class="hero-title reveal">
+          Order out of
+          <span class="word-rotate" aria-hidden="true">
+            <span>chaos.</span>
+            <span>revisions.</span>
+            <span>drawings.</span>
+            <span>transmittals.</span>
+          </span>
+          <span class="sr-only">chaos.</span>
+        </h1>
+        <p class="hero-sub reveal">
+          Specialist document control that keeps your project's drawings, transmittals and
+          records accurate, traceable and audit-ready — from kick-off to handover.
+        </p>
+        <div class="hero-actions reveal">
+          <a href="#contact" class="btn btn-primary">Get in touch</a>
+          <a href="#services" class="btn btn-ghost">See what I do</a>
+        </div>
+        <div class="hero-stats reveal">
+          <div class="stat">
+            <span class="stat-num" data-count="15" data-suffix="+">0</span>
+            <span class="stat-label">Years on major projects</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-count="100" data-suffix="%">0</span>
+            <span class="stat-label">Audit-ready records</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-count="0" data-suffix="" data-text="ISO 19650">ISO 19650</span>
+            <span class="stat-label">Aligned workflows</span>
+          </div>
+        </div>
+      </div>
+      <a href="#services" class="scroll-cue" aria-label="Scroll to services">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- Services -->
+    <section class="section" id="services">
+      <div class="section-head reveal">
+        <p class="eyebrow">What I do</p>
+        <h2>Document control, end to end</h2>
+        <p class="section-lead">
+          Everything needed to keep project information controlled, distributed and
+          defensible — whether you're standing up a new EDMS or rescuing one mid-build.
+        </p>
+      </div>
+      <div class="cards">
+        <article class="card tilt reveal">
+          <div class="card-icon" aria-hidden="true">&#9783;</div>
+          <h3>Drawing &amp; Revision Control</h3>
+          <p>Drawing registers, revision tracking and superseded-document management so the
+            team always builds from the current issue — never the old one.</p>
+        </article>
+        <article class="card tilt reveal">
+          <div class="card-icon" aria-hidden="true">&#8644;</div>
+          <h3>Transmittals &amp; Distribution</h3>
+          <p>Controlled issue and receipt of documents with full traceability — who got what,
+            when, and at which revision.</p>
+        </article>
+        <article class="card tilt reveal">
+          <div class="card-icon" aria-hidden="true">&#9871;</div>
+          <h3>EDMS Setup &amp; Admin</h3>
+          <p>Configuration and day-to-day running of Aconex, ProjectWise, SharePoint and
+            similar platforms — workflows, numbering, access and templates.</p>
+        </article>
+        <article class="card tilt reveal">
+          <div class="card-icon" aria-hidden="true">&#9745;</div>
+          <h3>ISO 19650 &amp; BIM Workflows</h3>
+          <p>Information management aligned to ISO 19650 — naming conventions, the CDE,
+            and structured workflows that keep BIM deliverables in order.</p>
+        </article>
+        <article class="card tilt reveal">
+          <div class="card-icon" aria-hidden="true">&#9873;</div>
+          <h3>Compliance &amp; Audit</h3>
+          <p>Document QA, status reporting and audit preparation so handover and compliance
+            reviews are a formality, not a fire drill.</p>
+        </article>
+        <article class="card tilt reveal">
+          <div class="card-icon" aria-hidden="true">&#9881;</div>
+          <h3>Process &amp; Templates</h3>
+          <p>Document control procedures, registers and templates built to suit your project —
+            scalable from a single package to a full programme.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Why -->
+    <section class="section section-why" id="why">
+      <div class="why-grid">
+        <div class="why-text reveal">
+          <p class="eyebrow">Why Doculus</p>
+          <h2>Documentation that holds up under pressure</h2>
+          <p class="section-lead">
+            On a live site, the cost of the wrong revision isn't a typo — it's rework, delay
+            and disputes. I bring the discipline that keeps information clean so your team can
+            get on with building.
+          </p>
+          <ul class="why-list">
+            <li><strong>Single source of truth.</strong> One controlled register everyone trusts.</li>
+            <li><strong>Full traceability.</strong> Every issue, receipt and revision accounted for.</li>
+            <li><strong>Built for handover.</strong> Records structured for audit and close-out from day one.</li>
+            <li><strong>Platform agnostic.</strong> Comfortable across the major EDMS tools.</li>
+          </ul>
+        </div>
+        <div class="why-visual reveal" aria-hidden="true">
+          <div class="doc-stack">
+            <div class="doc doc-1"><span></span><span></span><span></span></div>
+            <div class="doc doc-2"><span></span><span></span><span></span></div>
+            <div class="doc doc-3"><span></span><span></span><span></span></div>
+            <div class="doc-badge">REV C</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="section" id="process">
+      <div class="section-head reveal">
+        <p class="eyebrow">How it works</p>
+        <h2>A clear path to control</h2>
+      </div>
+      <ol class="timeline">
+        <li class="reveal">
+          <span class="step-num">01</span>
+          <h3>Review</h3>
+          <p>Assess your current documents, systems and pain points — and where the risk sits.</p>
+        </li>
+        <li class="reveal">
+          <span class="step-num">02</span>
+          <h3>Set up</h3>
+          <p>Establish the register, numbering, workflows and procedures that fit the project.</p>
+        </li>
+        <li class="reveal">
+          <span class="step-num">03</span>
+          <h3>Run</h3>
+          <p>Manage transmittals, revisions and distribution as the day-to-day engine room.</p>
+        </li>
+        <li class="reveal">
+          <span class="step-num">04</span>
+          <h3>Hand over</h3>
+          <p>Deliver complete, audit-ready records and a clean close-out package.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Contact -->
+    <section class="section section-contact" id="contact">
+      <div class="contact-card reveal">
+        <p class="eyebrow">Let's talk</p>
+        <h2>Got a project that needs control?</h2>
+        <p class="section-lead">
+          Tell me about your project and I'll show you how to get the documentation under
+          control — and keep it that way.
+        </p>
+        <a class="btn btn-primary btn-lg" id="contact-btn"
+           href="mailto:your-email@example.com?subject=Document%20Control%20Enquiry&amp;body=Hi%20Doculus%2C%0A%0AI'd%20like%20to%20talk%20about%20document%20control%20for%20my%20project.%0A%0AProject%3A%20%0AScope%3A%20%0ATimeframe%3A%20%0A%0AThanks%2C%0A">
+          Contact me
+        </a>
+        <p class="contact-hint">Opens your email app, addressed and ready to send.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="brand-name">Doculus</span>
+    <span>Document Control · Construction &amp; Engineering</span>
+    <span class="footer-year" id="year"></span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
