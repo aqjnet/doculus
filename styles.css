@@ -336,6 +336,23 @@ main, .nav, .footer { position: relative; z-index: 2; }
 .timeline h3 { font-size: 1.18rem; margin: 8px 0 8px; }
 .timeline p { color: var(--muted); font-size: 0.94rem; }
 
+/* Document Packs extras */
+.packs-note {
+  text-align: center; color: var(--muted);
+  max-width: 720px; margin: 36px auto 22px;
+  font-size: clamp(1rem, 2vw, 1.12rem);
+}
+.tag-row {
+  list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+}
+.tag-row li {
+  font-size: 0.85rem; font-weight: 500; color: var(--text);
+  padding: 8px 16px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--panel-border);
+  transition: border-color 0.25s, transform 0.25s;
+}
+.tag-row li:hover { border-color: rgba(76, 201, 240, 0.45); transform: translateY(-2px); }
+
 /* ===== Contact ===== */
 .section-contact { display: flex; justify-content: center; }
 .contact-card {
