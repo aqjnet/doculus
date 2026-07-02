@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Doculus — engineering document services for design, construction and engineering firms. Turnover packages, O&M manuals, document control, completions support, estimating, CAD, printing and archiving." />
-  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="theme-color" content="#070a14" />
   <title>Doculus — Engineering Document Services</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,9 +13,26 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Animated background canvas -->
+  <!-- Intro preloader (pure CSS: always plays out and disappears) -->
+  <div class="preloader" aria-hidden="true">
+    <img src="logo.svg" alt="" width="72" height="72" />
+  </div>
+
+  <!-- Scroll progress -->
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <!-- Ambient background -->
+  <div class="aurora" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
-  <div class="cursor-glow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Custom cursor (desktop only, JS-enabled) -->
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
 
   <!-- Nav -->
   <header class="nav" id="nav">
@@ -24,10 +41,10 @@
       <span class="brand-name">Doculus</span>
     </a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="#services">Services</a>
-      <a href="#packs">Document Packs</a>
-      <a href="#why">Why Doculus</a>
-      <a href="#contact" class="nav-cta">Contact</a>
+      <a href="#services" data-nav>Services</a>
+      <a href="#packs" data-nav>Document Packs</a>
+      <a href="#why" data-nav>Why Doculus</a>
+      <a href="#contact" class="nav-cta magnetic">Contact</a>
     </nav>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -41,21 +58,19 @@
   </div>
 
   <main id="top">
-    <!-- Hero -->
+    <!-- ============ HERO ============ -->
     <section class="hero">
       <div class="hero-inner">
         <p class="eyebrow reveal">Engineering Document Services</p>
-        <div class="hero-logo-wrap reveal">
-          <svg class="hero-logo" viewBox="0 0 48 48" role="img" aria-label="Doculus" xmlns="http://www.w3.org/2000/svg">
+
+        <div class="hero-mark reveal" id="hero-mark">
+          <svg class="hero-logo" viewBox="0 0 48 48" role="img" aria-label="Doculus logo" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="hgrad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#4CC9F0"/>
-                <stop offset="0.55" stop-color="#7B61FF"/>
-                <stop offset="1" stop-color="#34E0A1"/>
+                <stop stop-color="#4CC9F0"/><stop offset="0.55" stop-color="#7B61FF"/><stop offset="1" stop-color="#34E0A1"/>
               </linearGradient>
               <linearGradient id="hgrad2" x1="12" y1="8" x2="36" y2="40" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#4CC9F0"/>
-                <stop offset="1" stop-color="#34E0A1"/>
+                <stop stop-color="#4CC9F0"/><stop offset="1" stop-color="#34E0A1"/>
               </linearGradient>
               <linearGradient id="hscan" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#4CC9F0" stop-opacity="0"/>
@@ -66,148 +81,186 @@
                 <path d="M12 9.5A3.5 3.5 0 0 1 15.5 6H27l9 9v18.5A3.5 3.5 0 0 1 32.5 37h-17A3.5 3.5 0 0 1 12 33.5v-24Z"/>
               </clipPath>
             </defs>
-
-            <!-- back sheets -->
             <rect x="13" y="9" width="22" height="28" rx="4" transform="rotate(8 24 23)" fill="url(#hgrad)" opacity="0.22"/>
             <rect x="12" y="8" width="22" height="28" rx="4" transform="rotate(4 23 22)" fill="url(#hgrad)" opacity="0.40"/>
-
-            <!-- front sheet -->
             <path d="M12 9.5A3.5 3.5 0 0 1 15.5 6H27l9 9v18.5A3.5 3.5 0 0 1 32.5 37h-17A3.5 3.5 0 0 1 12 33.5v-24Z" fill="#0d1322" stroke="url(#hgrad2)" stroke-width="2"/>
             <path d="M27 6v6a3 3 0 0 0 3 3h6" stroke="url(#hgrad2)" stroke-width="2" stroke-linejoin="round" fill="none"/>
-
-            <!-- scanning beam (clipped to the sheet) -->
-            <g clip-path="url(#hsheet)">
-              <rect class="scan" x="12" y="8" width="24" height="6" fill="url(#hscan)"/>
-            </g>
-
-            <!-- document lines -->
+            <g clip-path="url(#hsheet)"><rect class="scan" x="12" y="8" width="24" height="6" fill="url(#hscan)"/></g>
             <rect class="line line-1" x="16.5" y="19" width="10" height="2.2" rx="1.1" fill="#4CC9F0"/>
             <rect class="line line-2" x="16.5" y="23.6" width="15" height="2.2" rx="1.1" fill="#6f8bd6" opacity="0.6"/>
             <rect class="line line-3" x="16.5" y="28.2" width="12" height="2.2" rx="1.1" fill="#6f8bd6" opacity="0.6"/>
-
-            <!-- control orbit node -->
             <circle cx="35" cy="33" r="8.5" fill="#0a0e1a"/>
             <circle class="orbit" cx="35" cy="33" r="6.6" fill="none" stroke="url(#hgrad)" stroke-width="1.6" stroke-dasharray="2.2 3"/>
             <circle class="node" cx="35" cy="33" r="3" fill="url(#hgrad2)"/>
           </svg>
+          <span class="hero-halo" aria-hidden="true"></span>
         </div>
-        <h1 class="hero-title reveal">Doculus</h1>
+
+        <h1 class="hero-title">
+          <span class="reveal word w1">Docu</span><span class="reveal word w2">lus</span>
+        </h1>
         <p class="hero-tagline reveal">Order out of chaos.</p>
+
         <p class="hero-sub reveal">
           Your trusted partner for engineering document services — tailored, high-quality
           solutions for design firms and construction &amp; engineering companies. We streamline
           your documentation, lift efficiency, and help deliver projects on time.
         </p>
+
         <div class="hero-actions reveal">
-          <a href="#contact" class="btn btn-primary">Get in touch</a>
-          <a href="#services" class="btn btn-ghost">Explore services</a>
+          <a href="#contact" class="btn btn-primary magnetic">Get in touch</a>
+          <a href="#services" class="btn btn-ghost magnetic">Explore services</a>
         </div>
+
         <div class="hero-stats reveal">
           <div class="stat">
-            <span class="stat-num" data-count="10" data-suffix="+">0</span>
+            <span class="stat-num" data-count="10" data-suffix="+">10+</span>
             <span class="stat-label">Years of expertise</span>
           </div>
           <div class="stat">
-            <span class="stat-num" data-count="0" data-suffix="" data-text="GMP">GMP</span>
+            <span class="stat-num">GMP</span>
             <span class="stat-label">Aligned turnover packs</span>
           </div>
           <div class="stat">
-            <span class="stat-num" data-count="100" data-suffix="%">0</span>
+            <span class="stat-num" data-count="100" data-suffix="%">100%</span>
             <span class="stat-label">Audit-ready handovers</span>
           </div>
         </div>
       </div>
-      <a href="#services" class="scroll-cue" aria-label="Scroll to services">
-        <span></span>
-      </a>
+
+      <!-- Services ticker -->
+      <div class="ticker reveal" aria-hidden="true">
+        <div class="ticker-track">
+          <span>Turnover Packages</span><i>✦</i>
+          <span>O&amp;M Manuals</span><i>✦</i>
+          <span>Document Control</span><i>✦</i>
+          <span>Completions Support</span><i>✦</i>
+          <span>Estimating</span><i>✦</i>
+          <span>CAD Services</span><i>✦</i>
+          <span>Printing &amp; Archiving</span><i>✦</i>
+          <span>Turnover Packages</span><i>✦</i>
+          <span>O&amp;M Manuals</span><i>✦</i>
+          <span>Document Control</span><i>✦</i>
+          <span>Completions Support</span><i>✦</i>
+          <span>Estimating</span><i>✦</i>
+          <span>CAD Services</span><i>✦</i>
+          <span>Printing &amp; Archiving</span><i>✦</i>
+        </div>
+      </div>
     </section>
 
-    <!-- Services -->
+    <!-- ============ SERVICES (bento) ============ -->
     <section class="section" id="services">
       <div class="section-head reveal">
         <p class="eyebrow">What we do</p>
-        <h2>Comprehensive services, end to end</h2>
+        <h2>Comprehensive services, <em>end to end</em></h2>
         <p class="section-lead">
           From document creation and control to turnover, completions, estimating and CAD —
           whatever the complexity, we have the capability to deliver.
         </p>
       </div>
-      <div class="cards">
-        <article class="card tilt reveal">
-          <div class="card-icon" aria-hidden="true">&#9871;</div>
+
+      <div class="bento">
+        <article class="card feature reveal">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M14 4v5h5"/><path d="m8.5 14 2 2 4-4.5"/></svg>
+          </div>
           <h3>Turnover Packages</h3>
-          <p>Fully compliant, GMP-aligned TOPs compiled for principal contractors,
-            subcontractors and vendors — structured, indexed and validation-ready.</p>
+          <p>Fully compliant, GMP-aligned TOPs for principal contractors, subcontractors and
+            vendors — structured, indexed and validation-ready, from a single approved
+            “First of Kind” standard to thousands of systems.</p>
+          <span class="card-tag">Flagship</span>
         </article>
-        <article class="card tilt reveal">
-          <div class="card-icon" aria-hidden="true">&#9783;</div>
+
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M2 19h20"/><path d="M8 8h8M8 12h8"/></svg>
+          </div>
           <h3>O&amp;M Manuals &amp; Final Docs</h3>
-          <p>Comprehensive Operation &amp; Maintenance manuals and final documentation
-            packages for a seamless, well-presented handover.</p>
+          <p>Comprehensive Operation &amp; Maintenance manuals and final documentation packages
+            for a seamless, well-presented handover.</p>
         </article>
-        <article class="card tilt reveal">
-          <div class="card-icon" aria-hidden="true">&#8644;</div>
+
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 11h18"/><path d="m9 16 2 2 4-4"/></svg>
+          </div>
           <h3>Document Control &amp; Coordination</h3>
-          <p>Daily transmittals, uploads and Master Document Register management across the
-            full lifecycle — including CQV, EDMS/CDE training and supplier compliance.</p>
+          <p>Transmittals, uploads and Master Document Register management across the full
+            lifecycle — including CQV, EDMS/CDE training and supplier compliance.</p>
         </article>
-        <article class="card tilt reveal">
-          <div class="card-icon" aria-hidden="true">&#9745;</div>
+
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+          </div>
           <h3>Turnover &amp; Completions Support</h3>
-          <p>System trackers, completions software, snag/punch lists and live progress
-            dashboards that drive systems to completion across pharma and data-centre projects.</p>
+          <p>System trackers, completions software, punch lists and live dashboards that drive
+            systems to completion on pharma and data-centre projects.</p>
         </article>
-        <article class="card tilt reveal">
-          <div class="card-icon" aria-hidden="true">&#9881;</div>
+
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 4.5 5 5L8 21H3v-5L14.5 4.5Z"/><path d="m12 7 5 5"/></svg>
+          </div>
           <h3>Estimating &amp; CAD</h3>
           <p>Accurate take-offs and tender support, plus 2D CAD amendments — from design
-            changes through to as-built and as-fitted drawings.</p>
+            changes through to as-built drawings.</p>
         </article>
-        <article class="card tilt reveal">
-          <div class="card-icon" aria-hidden="true">&#9873;</div>
+
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 15h12v6H6z"/></svg>
+          </div>
           <h3>Printing &amp; Archiving</h3>
-          <p>Secure, organised storage, scanning to searchable digital records, and
-            printing/laminating up to A0 delivered to your office or site.</p>
+          <p>Secure storage, scanning to searchable digital records, and printing up to A0
+            delivered to your office or site.</p>
         </article>
       </div>
     </section>
 
-    <!-- Document Packs -->
+    <!-- ============ DOCUMENT PACKS ============ -->
     <section class="section" id="packs">
       <div class="section-head reveal">
         <p class="eyebrow">Document Packs</p>
-        <h2>Leave your document packs to us</h2>
+        <h2>Leave your document packs <em>to us</em></h2>
         <p class="section-lead">
           We create and compile your Turnover Packages (TOPs) and O&amp;M Manuals through a
           simple, collaborative 4-step process — reclaiming your time.
         </p>
       </div>
-      <ol class="timeline">
-        <li class="reveal">
+
+      <ol class="steps" id="steps">
+        <li class="step reveal">
+          <div class="step-dot" aria-hidden="true"></div>
           <span class="step-num">01</span>
           <h3>Kick-off meeting</h3>
-          <p>In person or virtual. Share the job spec and purchase orders, and we set the
-            stage for an efficient process.</p>
+          <p>In person or virtual. Share the job spec and purchase orders, and we set the stage
+            for an efficient process.</p>
         </li>
-        <li class="reveal">
+        <li class="step reveal">
+          <div class="step-dot" aria-hidden="true"></div>
           <span class="step-num">02</span>
           <h3>Information gathering</h3>
-          <p>We contact subcontractors and suppliers and meticulously compile all the
-            necessary documentation.</p>
+          <p>We contact subcontractors and suppliers and meticulously compile all the necessary
+            documentation.</p>
         </li>
-        <li class="reveal">
+        <li class="step reveal">
+          <div class="step-dot" aria-hidden="true"></div>
           <span class="step-num">03</span>
           <h3>Draft review</h3>
-          <p>We issue the draft pack for your review and fold in any changes — collaborative
-            and smoother every time.</p>
+          <p>We issue the draft pack for your review and fold in any changes — collaborative and
+            smoother every time.</p>
         </li>
-        <li class="reveal">
+        <li class="step reveal">
+          <div class="step-dot" aria-hidden="true"></div>
           <span class="step-num">04</span>
           <h3>Final presentation</h3>
-          <p>Delivered in your branded ring binder, plus a bookmarked electronic copy online
-            or on USB.</p>
+          <p>Delivered in your branded ring binder, plus a bookmarked electronic copy online or
+            on USB.</p>
         </li>
       </ol>
+
       <p class="packs-note reveal">
         Built by system and split by discipline — from a single approved “First of Kind”
         standard rolled out consistently across hundreds of systems.
@@ -222,12 +275,12 @@
       </ul>
     </section>
 
-    <!-- Why -->
+    <!-- ============ WHY ============ -->
     <section class="section section-why" id="why">
       <div class="why-grid">
         <div class="why-text reveal">
           <p class="eyebrow">Why Doculus</p>
-          <h2>Why outsource to Doculus</h2>
+          <h2>Why outsource <em>to Doculus</em></h2>
           <p class="section-lead">
             Every project is unique. We invest the time to understand yours, then take the
             documentation burden off your team — accurately, compliantly and on time.
@@ -250,20 +303,23 @@
       </div>
     </section>
 
-    <!-- Contact -->
+    <!-- ============ CONTACT ============ -->
     <section class="section section-contact" id="contact">
       <div class="contact-card reveal">
-        <p class="eyebrow">Let's talk</p>
-        <h2>Got a project that needs document support?</h2>
-        <p class="section-lead">
-          Tell us about your project — one-off or ongoing — and we'll show you how to take the
-          documentation off your plate.
-        </p>
-        <a class="btn btn-primary btn-lg" id="contact-btn"
-           href="mailto:your-email@example.com?subject=Project%20Enquiry&amp;body=Hi%20Doculus%2C%0A%0AI'd%20like%20to%20talk%20about%20document%20services%20for%20my%20project.%0A%0AProject%3A%20%0AScope%3A%20%0ATimeframe%3A%20%0A%0AThanks%2C%0A">
-          Contact us
-        </a>
-        <p class="contact-hint">Opens your email app, addressed and ready to send.</p>
+        <div class="contact-border" aria-hidden="true"></div>
+        <div class="contact-inner">
+          <p class="eyebrow">Let's talk</p>
+          <h2>Got a project that needs <em>document support?</em></h2>
+          <p class="section-lead">
+            Tell us about your project — one-off or ongoing — and we'll show you how to take the
+            documentation off your plate.
+          </p>
+          <a class="btn btn-primary btn-lg magnetic" id="contact-btn"
+             href="mailto:your-email@example.com?subject=Project%20Enquiry&amp;body=Hi%20Doculus%2C%0A%0AI'd%20like%20to%20talk%20about%20document%20services%20for%20my%20project.%0A%0AProject%3A%20%0AScope%3A%20%0ATimeframe%3A%20%0A%0AThanks%2C%0A">
+            Contact us
+          </a>
+          <p class="contact-hint">Opens your email app, addressed and ready to send.</p>
+        </div>
       </div>
     </section>
   </main>
