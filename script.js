@@ -65,7 +65,7 @@
         var parent = e.target.parentElement;
         var idx = groupIndex.get(parent) || 0;
         groupIndex.set(parent, idx + 1);
-        e.target.style.setProperty("--d", Math.min(idx * 0.09, 0.45) + "s");
+        e.target.style.setProperty("--d", Math.min(idx * 0.08, 0.4) + "s");
         e.target.classList.add("in");
         io.unobserve(e.target);
       });
@@ -82,8 +82,7 @@
   function animateCount(el) {
     var target = parseFloat(el.dataset.count) || 0;
     var suffix = el.dataset.suffix || "";
-    if (reduceMotion) { el.textContent = target + suffix; return; }
-    var start = null, dur = 1400;
+    var start = null, dur = 1300;
     function tick(ts) {
       if (!start) start = ts;
       var p = Math.min((ts - start) / dur, 1);
@@ -108,135 +107,127 @@
     if (!steps || reduceMotion) return;
     var r = steps.getBoundingClientRect();
     var vh = window.innerHeight;
-    var p = (vh * 0.85 - r.top) / (r.height + vh * 0.35);
+    var p = (vh * 0.85 - r.top) / (r.height + vh * 0.3);
     p = Math.max(0, Math.min(1, p));
     steps.style.setProperty("--steps-p", p.toFixed(3));
   }
 
-  /* ---- Card spotlight + tilt ---- */
-  document.querySelectorAll(".card, .step").forEach(function (card) {
-    card.addEventListener("pointermove", function (e) {
-      var r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", (e.clientX - r.left) + "px");
-      card.style.setProperty("--my", (e.clientY - r.top) + "px");
-      if (!reduceMotion && finePointer && card.classList.contains("card")) {
-        var rx = ((e.clientY - r.top) / r.height - 0.5) * -4;
-        var ry = ((e.clientX - r.left) / r.width - 0.5) * 4;
-        card.style.transform = "perspective(800px) rotateX(" + rx + "deg) rotateY(" + ry + "deg) translateY(-4px)";
-      }
-    });
-    card.addEventListener("pointerleave", function () { card.style.transform = ""; });
-  });
-
-  /* ---- Magnetic buttons ---- */
-  if (finePointer && !reduceMotion) {
-    document.querySelectorAll(".magnetic").forEach(function (el) {
-      el.addEventListener("pointermove", function (e) {
-        var r = el.getBoundingClientRect();
-        var dx = e.clientX - (r.left + r.width / 2);
-        var dy = e.clientY - (r.top + r.height / 2);
-        el.style.transform = "translate(" + dx * 0.18 + "px," + dy * 0.22 + "px)";
-      });
-      el.addEventListener("pointerleave", function () {
-        el.style.transition = "transform 0.4s cubic-bezier(0.16,1,0.3,1)";
-        el.style.transform = "";
-        setTimeout(function () { el.style.transition = ""; }, 400);
-      });
-    });
-  }
-
-  /* ---- Custom cursor ---- */
-  var dot = document.querySelector(".cursor-dot");
-  var ring = document.querySelector(".cursor-ring");
-  if (dot && ring && finePointer && !reduceMotion) {
+  /* ---- CAD crosshair with coordinate readout ---- */
+  var crossV = document.querySelector(".cross-v");
+  var crossH = document.querySelector(".cross-h");
+  var readout = document.getElementById("cross-readout");
+  if (crossV && crossH && readout && finePointer && !reduceMotion) {
     root.classList.add("cursor-on");
-    var rx = -100, ry = -100, tx = -100, ty = -100;
+    var rafPending = false, px = 0, py = 0;
     window.addEventListener("pointermove", function (e) {
-      tx = e.clientX; ty = e.clientY;
-      dot.style.transform = "translate(" + tx + "px," + ty + "px)";
-    }, { passive: true });
-    (function ringLoop() {
-      rx += (tx - rx) * 0.16;
-      ry += (ty - ry) * 0.16;
-      ring.style.transform = "translate(" + rx + "px," + ry + "px)";
-      requestAnimationFrame(ringLoop);
-    })();
-    document.querySelectorAll("a, button, .card, .tag-row li").forEach(function (el) {
-      el.addEventListener("pointerenter", function () { ring.classList.add("is-hover"); });
-      el.addEventListener("pointerleave", function () { ring.classList.remove("is-hover"); });
-    });
-  }
-
-  /* ---- Hero parallax (logo drifts with pointer) ---- */
-  var heroMark = document.getElementById("hero-mark");
-  if (heroMark && finePointer && !reduceMotion) {
-    window.addEventListener("pointermove", function (e) {
-      var dx = (e.clientX / window.innerWidth - 0.5) * 14;
-      var dy = (e.clientY / window.innerHeight - 0.5) * 10;
-      heroMark.style.transform = "translate(" + dx + "px," + dy + "px)";
+      px = e.clientX; py = e.clientY;
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(function () {
+        rafPending = false;
+        crossV.style.transform = "translateX(" + px + "px)";
+        crossH.style.transform = "translateY(" + py + "px)";
+        readout.style.left = px + "px";
+        readout.style.top = py + "px";
+        readout.textContent =
+          "X " + String(px).padStart(4, "0") + " · Y " + String(py + Math.round(window.scrollY)).padStart(4, "0");
+      });
     }, { passive: true });
   }
 
-  /* ---- Constellation canvas ---- */
+  /* ---- Drafting canvas: lines being drawn on the board ---- */
   var canvas = document.getElementById("bg-canvas");
   if (canvas && !reduceMotion) {
     var ctx = canvas.getContext("2d");
-    var w, h, dpr, nodes = [];
-    var mouse = { x: -9999, y: -9999 };
+    var w, h, dpr;
+    var GRID = 24;
+    var lines = [];
+    var lastSpawn = 0;
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = window.innerWidth; h = window.innerHeight;
       canvas.width = w * dpr; canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var count = Math.min(Math.floor((w * h) / 15000), 100);
-      nodes = [];
-      for (var i = 0; i < count; i++) {
-        nodes.push({
-          x: Math.random() * w, y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.32,
-          vy: (Math.random() - 0.5) * 0.32,
-          r: 1 + Math.random() * 1.2
-        });
-      }
     }
 
-    function step() {
-      ctx.clearRect(0, 0, w, h);
-      for (var i = 0; i < nodes.length; i++) {
-        var n = nodes[i];
-        n.x += n.vx; n.y += n.vy;
-        if (n.x < 0 || n.x > w) n.vx *= -1;
-        if (n.y < 0 || n.y > h) n.vy *= -1;
+    function snap(v) { return Math.round(v / GRID) * GRID; }
 
-        for (var j = i + 1; j < nodes.length; j++) {
-          var m = nodes[j];
-          var dx = n.x - m.x, dy = n.y - m.y;
-          var d2 = dx * dx + dy * dy;
-          if (d2 < 17000) {
-            ctx.strokeStyle = "rgba(76,201,240," + ((1 - d2 / 17000) * 0.20) + ")";
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(m.x, m.y); ctx.stroke();
+    function spawnLine(now) {
+      var horizontal = Math.random() < 0.5;
+      var len = GRID * (3 + Math.floor(Math.random() * 10));
+      var x = snap(Math.random() * (w - len));
+      var y = snap(Math.random() * (h - len));
+      var accent = Math.random() < 0.18;
+      lines.push({
+        x1: x, y1: y,
+        x2: horizontal ? x + len : x,
+        y2: horizontal ? y : y + len,
+        born: now,
+        draw: 900 + Math.random() * 600,   /* draw duration */
+        hold: 2600 + Math.random() * 2000, /* fully visible */
+        fade: 1400,                        /* fade out */
+        accent: accent,
+        ticks: Math.random() < 0.4        /* end ticks, like a dimension line */
+      });
+    }
+
+    function step(now) {
+      ctx.clearRect(0, 0, w, h);
+
+      if (now - lastSpawn > 520 && lines.length < 14) {
+        lastSpawn = now;
+        spawnLine(now);
+      }
+
+      for (var i = lines.length - 1; i >= 0; i--) {
+        var L = lines[i];
+        var age = now - L.born;
+        var total = L.draw + L.hold + L.fade;
+        if (age > total) { lines.splice(i, 1); continue; }
+
+        var p = Math.min(age / L.draw, 1);            /* draw progress */
+        var alpha = age > L.draw + L.hold
+          ? 1 - (age - L.draw - L.hold) / L.fade      /* fading */
+          : 1;
+        var base = L.accent ? "255,122,26" : "242,241,236";
+        var a = (L.accent ? 0.35 : 0.10) * alpha;
+
+        var cx = L.x1 + (L.x2 - L.x1) * p;
+        var cy = L.y1 + (L.y2 - L.y1) * p;
+
+        ctx.strokeStyle = "rgba(" + base + "," + a + ")";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(L.x1 + 0.5, L.y1 + 0.5);
+        ctx.lineTo(cx + 0.5, cy + 0.5);
+        ctx.stroke();
+
+        /* end ticks (dimension-line style) */
+        if (L.ticks) {
+          ctx.beginPath();
+          if (L.y1 === L.y2) {
+            ctx.moveTo(L.x1 + 0.5, L.y1 - 4); ctx.lineTo(L.x1 + 0.5, L.y1 + 4);
+            if (p === 1) { ctx.moveTo(L.x2 + 0.5, L.y2 - 4); ctx.lineTo(L.x2 + 0.5, L.y2 + 4); }
+          } else {
+            ctx.moveTo(L.x1 - 4, L.y1 + 0.5); ctx.lineTo(L.x1 + 4, L.y1 + 0.5);
+            if (p === 1) { ctx.moveTo(L.x2 - 4, L.y2 + 0.5); ctx.lineTo(L.x2 + 4, L.y2 + 0.5); }
           }
+          ctx.stroke();
         }
-        var mdx = n.x - mouse.x, mdy = n.y - mouse.y;
-        var md2 = mdx * mdx + mdy * mdy;
-        if (md2 < 30000) {
-          ctx.strokeStyle = "rgba(123,97,255," + ((1 - md2 / 30000) * 0.5) + ")";
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+
+        /* pen point while drawing */
+        if (p < 1) {
+          ctx.fillStyle = "rgba(" + base + "," + Math.min(a * 3, 0.8) + ")";
+          ctx.fillRect(cx - 1.5, cy - 1.5, 3, 3);
         }
-        ctx.fillStyle = "rgba(160,205,255,0.55)";
-        ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
       }
       requestAnimationFrame(step);
     }
 
     window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", function (e) { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
-    window.addEventListener("pointerleave", function () { mouse.x = -9999; mouse.y = -9999; });
     resize();
-    step();
+    requestAnimationFrame(step);
   }
 
   onScroll();
